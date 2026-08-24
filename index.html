@@ -16,7 +16,7 @@
  #loadTxt{font-size:15px;color:rgba(255,255,255,.7);letter-spacing:.06em}
  #ui{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:5;color:rgba(255,255,255,.9);font-size:15px}
  
- .row{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:nowrap;white-space:nowrap}
+ .row{display:flex;justify-content:center;align-items:flex-end;gap:14px;flex-wrap:nowrap;white-space:nowrap}
  .gy{display:flex;align-items:center}
  .sl{display:flex;flex-direction:column;align-items:center;gap:6px}
  .sl span{font-variant-numeric:tabular-nums;text-shadow:0 1px 4px #000}
@@ -27,7 +27,7 @@
  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:none}
  #bGyroT{background:none;border:1px solid rgba(255,255,255,.45);border-radius:14px;color:rgba(255,255,255,.75);font-size:15px;line-height:26px;height:28px;padding:0 14px}
  #bGyroT.on{color:#0c1;border-color:#0c1}
- #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:40px;line-height:34px;padding:0 8px 6px;text-shadow:0 1px 6px #000}
+ #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:36px;height:30px;display:flex;align-items:center;padding:0 8px;text-shadow:0 1px 6px #000;align-self:flex-end;margin-bottom:0px}
  #gyroAsk{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9;background:rgba(0,0,0,.45)}
  #gyroAsk button{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:16px 26px;font-size:17px}
  #bRide{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:14px;z-index:6;background:rgba(20,20,20,.6);
@@ -63,7 +63,6 @@
  <div id="loadTxt">едем…</div>
 </div>
 
-<button id="bRide" style="display:none">🏍 Прокатиться</button>
 <div id="crash">💥</div>
 <div id="ui" style="display:none">
  <div class="row">
@@ -245,7 +244,7 @@ function tick(){
   cam.position.copy(p);
   const look=new THREE.Vector3().lerpVectors(start,pathPoint(12),e);
   cam.lookAt(look.x,look.y,look.z);
-  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();document.getElementById('ui').style.display='flex';document.getElementById('bRide').style.display='block';}
+  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();document.getElementById('ui').style.display='flex';}
  } else if(ride){
   // мотоцикл: газ/тормоз + руль
   let g=gas, st=0;
