@@ -102,6 +102,14 @@ async function fetchProgress(url,weight,base){
 }
 
 const TRACK = await (await fetch('track.json')).json();
+const DEM = await (await fetch('dem.json')).json();
+function groundAt(x,z){
+ const fx=(x-DEM.x0)/DEM.step, fz=(z-DEM.z0)/DEM.step;
+ const ix=Math.max(0,Math.min(DEM.nx-2,Math.floor(fx))), iz=Math.max(0,Math.min(DEM.nz-2,Math.floor(fz)));
+ const tx=Math.min(1,Math.max(0,fx-ix)), tz=Math.min(1,Math.max(0,fz-iz));
+ const d=DEM.data, s=DEM.scale, w=DEM.nx;
+ return (d[iz*w+ix]*(1-tx)*(1-tz)+d[iz*w+ix+1]*tx*(1-tz)+d[(iz+1)*w+ix]*(1-tx)*tz+d[(iz+1)*w+ix+1]*tx*tz)*s;
+}
 const N=TRACK.length;
 const start=new THREE.Vector3(...TRACK[0]);
 const INTRO=4;
@@ -254,9 +262,10 @@ function tick(){
   if(Math.abs(lat)>0.22){ crashNow(); }
   const p=pathPoint(idx), yawP=pathDir(idx);
   const rx=Math.cos(yawP), rz=-Math.sin(yawP); // right vector
-  p.x+=rx*lat; p.z+=rz*lat; p.y+=Math.max(hOff,-0.02)-0.03;
+  p.x+=rx*lat; p.z+=rz*lat; p.y=groundAt(p.x,p.z)+0.08+Math.max(hOff,0)*0.3;
   if(!smPos)smPos=p.clone(); smPos.lerp(p,1-Math.pow(0.0005,dt));
   smYaw=(smYaw===null)?yawP:lerpAngle(smYaw,yawP+st*0.25,1-Math.pow(0.02,dt));
+  smPos.y=Math.max(smPos.y, groundAt(smPos.x,smPos.z)+0.06);
   cam.position.copy(smPos);
   const yw=smYaw, pt2=-0.05;
   cam.lookAt(smPos.x+Math.sin(yw)*Math.cos(pt2),smPos.y+Math.sin(pt2),smPos.z+Math.cos(yw)*Math.cos(pt2));
@@ -264,7 +273,7 @@ function tick(){
   if(idx>=N-30 && speed>0) endSlow=Math.max(0,(N-2-idx)/28); else endSlow=1;
   idx+=speed*endSlow*3*dt;
   if(idx<0)idx=0; if(idx>N-2)idx=N-2;
-  const p=pathPoint(idx); p.y+=hOff;
+  const p=pathPoint(idx); p.y+=hOff; p.y=Math.max(p.y, groundAt(p.x,p.z)+0.05);
   if(!smPos)smPos=p.clone();
   smPos.lerp(p,1-Math.pow(0.001,dt));
   const targetYaw=pathDir(idx);
