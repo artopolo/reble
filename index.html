@@ -17,6 +17,8 @@
  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;margin-top:-8px;box-shadow:0 1px 6px rgba(0,0,0,.6)}
  input[type=range]::-moz-range-track{height:2px;background:rgba(255,255,255,.5)}
  input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:none}
+ #bGyroT{background:none;border:none;font-size:26px;line-height:20px;height:20px;padding:0 4px;filter:grayscale(1) opacity(.55)}
+ #bGyroT.on{filter:none}
  #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:30px;line-height:20px;height:20px;padding:0 4px;text-shadow:0 1px 6px #000;display:flex;align-items:center}
  #gyroAsk{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9;background:rgba(0,0,0,.45)}
  #gyroAsk button{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:16px 26px;font-size:17px}
@@ -62,6 +64,7 @@
  <div class="sl"><span id="lSpeed">1×</span><input id="sSpeed" type="range" min="-300" max="300" value="100"></div>
  <div class="sl"><span id="lH">H</span><input id="sHeight" type="range" min="-25" max="100" value="0"></div>
  <div class="sl"><span>&nbsp;</span><button id="bRestart">⟲</button></div>
+ <div class="sl" id="gyroSl" style="display:none"><span>&nbsp;</span><button id="bGyroT">🧭</button></div>
 </div>
 <script type="importmap">
 {"imports":{
@@ -149,7 +152,7 @@ function makeCloudTitle_unused(){
 
 let phase='intro', t0=performance.now()/1000, idx=0;
 let yawOff=0,pitchOff=0,smYaw=null,smPos=null,endSlow=1;
-let gyro=null,gyroBase=null;
+let gyro=null,gyroOn=false,gyroAnchor=null;
 const $=id=>document.getElementById(id);
 
 function pathPoint(i){ i=Math.max(0,Math.min(N-1.001,i));
@@ -168,10 +171,11 @@ if('ontouchstart' in window){
  $('gyroAsk').style.display='flex';
  $('gyroBtn').onclick=async()=>{
   try{
+   let ok=true;
    if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission){
-    const r=await DeviceOrientationEvent.requestPermission();
-    if(r==='granted') addEventListener('deviceorientation',e=>gyro=e);
-   } else addEventListener('deviceorientation',e=>gyro=e);
+    const r=await DeviceOrientationEvent.requestPermission(); ok=(r==='granted'); }
+   if(ok){ addEventListener('deviceorientation',e=>gyro=e);
+    document.getElementById('gyroSl').style.display='flex'; }
   }catch(e){}
   $('gyroAsk').style.display='none';
  };
@@ -183,6 +187,8 @@ function fmt(){
  const hOff=Math.max(parseFloat($('sHeight').value)/100*0.35,-0.09);
 }
 $('sSpeed').oninput=fmt; $('sHeight').oninput=fmt;
+$('bGyroT').onclick=()=>{ gyroOn=!gyroOn; $('bGyroT').classList.toggle('on',gyroOn);
+ if(gyroOn&&gyro){ gyroAnchor={a:gyro.alpha,b:gyro.beta,yaw:smYaw||0}; } else gyroAnchor=null; };
 $('bRestart').onclick=()=>{document.getElementById('ui').style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
  $('sSpeed').value=100;$('sHeight').value=0;fmt();
 };
@@ -192,11 +198,7 @@ function tick(){
  requestAnimationFrame(tick);
  const now=performance.now(), dt=Math.min((now-last)/1000,0.1); last=now;
  const tsec=now/1000;
- let gy=0,gp=0;
- if(gyro){if(gyroBase===null)gyroBase=[gyro.alpha,gyro.beta];
-  gy=THREE.MathUtils.degToRad(gyro.alpha-gyroBase[0]);
-  gp=THREE.MathUtils.degToRad(gyro.beta-gyroBase[1]);}
- let sv=parseFloat($('sSpeed').value); if(Math.abs(sv)<25)sv=0;
+  let sv=parseFloat($('sSpeed').value); if(Math.abs(sv)<25)sv=0;
  const speed=sv/100;
  const hOff=Math.max(parseFloat($('sHeight').value)/100*0.35,-0.09);
 
@@ -217,7 +219,13 @@ function tick(){
   const targetYaw=pathDir(idx);
   smYaw=(smYaw===null)?targetYaw:lerpAngle(smYaw,targetYaw,1-Math.pow(0.02,dt));
   cam.position.copy(smPos);
-  const yaw=smYaw+yawOff+gy, pit=Math.max(-1.3,Math.min(1.3,pitchOff+gp));
+  let yaw,pit;
+  if(gyroOn&&gyro&&gyroAnchor){        // 1:1 повороты телефоном
+   yaw=gyroAnchor.yaw+THREE.MathUtils.degToRad(gyro.alpha-gyroAnchor.a);
+   pit=Math.max(-1.3,Math.min(1.3,THREE.MathUtils.degToRad(gyro.beta-gyroAnchor.b)));
+  } else {
+   yaw=smYaw+yawOff; pit=Math.max(-1.3,Math.min(1.3,pitchOff));
+  }
   cam.lookAt(smPos.x+Math.sin(yaw)*Math.cos(pit),smPos.y+Math.sin(pit),smPos.z+Math.cos(yaw)*Math.cos(pit));
  }
 }
