@@ -49,6 +49,8 @@
  #sSpeed{width:min(56vw,520px)!important}
  #spdLab{position:absolute;top:-20px;left:0;font-size:14px;font-variant-numeric:tabular-nums;
   text-shadow:0 1px 4px #000;transform:translateX(-50%);pointer-events:none;white-space:nowrap}
+#sSpeed.pulse::-webkit-slider-thumb{animation:thpulse .8s ease-in-out 2}
+@keyframes thpulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.8)}50%{box-shadow:0 0 0 14px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
 </style>
 </head>
 <body>
@@ -194,14 +196,18 @@ function makeCloudTitle_unused(){
 let phase='intro', t0=performance.now()/1000, idx=0;
 let demoT=null, demoStart=0, demoDone=false;
 function startDemoTimer(){ if(demoDone) return; clearTimeout(demoT);
- demoT=setTimeout(()=>{ if(!demoDone){ demoStart=performance.now(); demoAnim(); } },3000); }
+ demoT=setTimeout(()=>{ if(!demoDone){
+   const s=$('sSpeed'); s.classList.add('pulse');
+   setTimeout(()=>{ s.classList.remove('pulse');
+     if(!demoDone){ demoStart=performance.now(); demoAnim(); } },1700);
+ } },5000); }
 function demoAnim(){
  if(demoDone) return;
  const t=(performance.now()-demoStart)/1000;
  let v;
  if(t<1.25)      v=100+(700-100)*(t/1.25);
- else if(t<3.25) v=700-(1400)*((t-1.25)/2);
- else if(t<4.25) v=-700+(800)*((t-3.25)/1);
+ else if(t<3.0)  v=700-(1000)*((t-1.25)/1.75);
+ else if(t<4.0)  v=-300+(400)*((t-3.0)/1);
  else { $('sSpeed').value=100; fmt(); demoDone=true; return; }
  $('sSpeed').value=v; fmt();
  requestAnimationFrame(demoAnim);
