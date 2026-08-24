@@ -248,7 +248,7 @@ function handDemo(){
   requestAnimationFrame(ha);
  })();
 }
-addEventListener('pointerdown',()=>{window._userDragged=true; if(handActive){handActive=false; yawOff=0;} },{capture:true});
+addEventListener('pointerdown',(e)=>{ if(e.target.closest('#ui')||e.target.closest('#sndwrap')||e.target.closest('#bRestart'))return; window._userDragged=true; if(handActive){handActive=false; yawOff=0;} },{capture:true});
 let ride=false, rv=0, lat=0, steer=0, gas=0;
 let yawOff=0,pitchOff=0,smYaw=null,smPos=null,endSlow=1;
 let gyro=null,gyroOn=false,gyroGranted=false;
