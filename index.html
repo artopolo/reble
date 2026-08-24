@@ -68,9 +68,8 @@
 <div id="ui" style="display:none">
  <div class="row">
   <button id="bRestart">⟲</button>
-  <div class="sl"><span id="lSpeed">t 1×</span><input id="sSpeed" type="range" min="-690" max="690" value="100"></div>
+  <div class="sl"><span id="lSpeed">speed 1×</span><input id="sSpeed" type="range" min="-690" max="690" value="100"></div>
   <div class="gy"><button id="bGyroT">гироскоп</button></div>
-  <div class="sl"><span id="lH">H</span><input id="sHeight" type="range" min="-170" max="100" value="0"></div>
  </div>
 </div>
 <script type="importmap">
@@ -198,12 +197,12 @@ addEventListener('pointermove',e=>{if(!drag)return;
 addEventListener('pointerup',()=>drag=null);
 
 
-function fmt(){ $('lH').textContent='H '+(parseFloat($('sHeight').value)/100*0.35).toFixed(2);
+function fmt(){ 
  let v=parseFloat($('sSpeed').value); if(Math.abs(v)<25){v=0;$('sSpeed').value=0;}
- $('lSpeed').textContent='t '+(v/100).toFixed(1).replace('.0','')+'×';
- const hOff=parseFloat($('sHeight').value)/100*0.35;
+ $('lSpeed').textContent='speed '+(v/100).toFixed(1).replace('.0','')+'×';
+ const hOff=0;
 }
-$('sSpeed').oninput=fmt; $('sHeight').oninput=fmt;
+$('sSpeed').oninput=fmt;
 $('bRide').onclick=()=>{ ride=!ride; $('bRide').classList.toggle('on',ride);
  if(ride){ rv=0; lat=0; steer=0; document.getElementById('ui').style.display='none'; }
  else { document.getElementById('ui').style.display='flex'; } };
@@ -228,7 +227,7 @@ $('bGyroT').onclick=async()=>{
   qYawFix.setFromAxisAngle(new THREE.Vector3(0,1,0), yawPath-yawDev);
  } };
 $('bRestart').onclick=()=>{document.getElementById('ui').style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
- $('sSpeed').value=100;$('sHeight').value=0;fmt();
+ $('sSpeed').value=100;fmt();
 };
 
 let last=performance.now();
@@ -238,7 +237,7 @@ function tick(){
  const tsec=now/1000;
   let sv=parseFloat($('sSpeed').value); if(Math.abs(sv)<25)sv=0;
  const speed=sv/100;
- const hOff=parseFloat($('sHeight').value)/100*0.35;
+ const hOff=0;
 
  if(phase==='intro'){
   const u=Math.min(1,(tsec-t0)/INTRO), e=u*u*(3-2*u);
