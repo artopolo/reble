@@ -61,6 +61,8 @@
   <circle id="bus" cx="111" cy="203" r="6" fill="#ffd876"/>
  </svg>
  <div id="loadTxt">едем…</div>
+ <div id="inappHint" style="display:none;color:rgba(255,255,255,.75);font-size:13px;max-width:280px;text-align:center">
+  Если вылетает — открой ссылку в Safari/Chrome (меню ⋯ → «Открыть в браузере»)</div>
 </div>
 
 <div id="crash">💥</div>
@@ -95,10 +97,10 @@ async function fetchProgress(url,weight,base){
  const reader=r.body.getReader(); const chunks=[]; let got=0;
  while(true){ const {done,value}=await reader.read(); if(done)break;
   chunks.push(value); got+=value.length; if(total)setProgress(base+weight*got/total); }
- const buf=new Uint8Array(got); let o=0; for(const c of chunks){buf.set(c,o);o+=c.length;}
- return buf.buffer;
+ return new Blob(chunks);   // без лишней копии 90 МБ — меньше памяти на телефоне
 }
 
+if(/Telegram|Instagram|FBAN|FBAV|VKClient/i.test(navigator.userAgent)) document.getElementById('inappHint').style.display='block';
 const TRACK = await (await fetch('track.json')).json();
 const DEM = await (await fetch('dem.json')).json();
 function groundAt(x,z){
@@ -117,9 +119,11 @@ const viewer = new GS.Viewer({
  cameraUp:[0,1,0], initialCameraPosition:[skyStart.x,skyStart.y,skyStart.z], initialCameraLookAt:[start.x,start.y,start.z],
  sharedMemoryForWorkers:false, sphericalHarmonicsDegree:0, useBuiltInControls:false,
 });
-const splatBuf = await fetchProgress('village_all.splat',0.96,0);
-setProgress(0.97);
-await viewer.addSplatScene(URL.createObjectURL(new Blob([splatBuf])),{format:GS.SceneFormat.Splat,showLoadingUI:false,rotation:[1,0,0,0]});
+const splatBlob = await fetchProgress('village_all.splat',0.33,0);   // скачивание = первая треть
+let fake=0.33;
+const anim=setInterval(()=>{ fake+=(0.97-fake)*0.06; setProgress(fake); },250); // сборка сцены = медленные две трети
+await viewer.addSplatScene(URL.createObjectURL(splatBlob),{format:GS.SceneFormat.Splat,showLoadingUI:false,rotation:[1,0,0,0]});
+clearInterval(anim);
 setProgress(1);
 await new Promise(r=>setTimeout(r,600));
 document.getElementById('load').remove();
