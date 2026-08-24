@@ -55,8 +55,15 @@
 @keyframes thpulse{0%{box-shadow:0 0 0 2px rgba(255,255,255,.9)}50%{box-shadow:0 0 0 28px rgba(255,255,255,.15)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
 
 @media (max-width:700px){
-  #bRestart{left:auto;right:52px;font-size:30px}
-   #sSpeed{width:48vw!important}
+  .row{width:100%;box-sizing:border-box;padding:0 14px;gap:10px;flex-wrap:wrap;justify-content:space-around;white-space:normal}
+  #spdwrap{flex-basis:100%;order:1;min-width:0;gap:6px;justify-content:center}
+  #sSpeed{flex:1;width:auto!important;min-width:0;max-width:none}
+  #gyroWrap{order:2} #bRestart{order:3;font-size:30px;position:static}
+  #sndwrap{order:4;position:static}
+  .switch{width:52px;height:32px}
+  .knob:before{width:28px;height:28px}
+  .switch input:checked + .knob:before{transform:translateX(20px)}
+  .tlab{font-size:15px}
  }
 </style>
 </head>
