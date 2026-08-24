@@ -309,7 +309,7 @@ $('gyroTgl').onchange=async()=>{
   const f=new THREE.Vector3(0,0,-1).applyQuaternion(qDevice);
   qYawFix.setFromAxisAngle(new THREE.Vector3(0,1,0), (smYaw||0)-Math.atan2(f.x,f.z)); }
 };
-$('bRestart').onclick=()=>{const _u2=document.getElementById('ui');_u2.classList.remove('show');_u2.style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
+$('bRestart').onclick=()=>{$('bRestart').style.display='none';const _u2=document.getElementById('ui');_u2.classList.remove('show');_u2.style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
  $('sSpeed').value=100;fmt();
 };
 
