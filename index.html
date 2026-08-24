@@ -199,9 +199,9 @@ function demoAnim(){
  if(demoDone) return;
  const t=(performance.now()-demoStart)/1000;
  let v;
- if(t<2.5)      v=100+(700-100)*(t/2.5);           // 1 → 7
- else if(t<6.5) v=700-(1400)*((t-2.5)/4);          // 7 → -7
- else if(t<8.5) v=-700+(800)*((t-6.5)/2);          // -7 → 1
+ if(t<1.25)      v=100+(700-100)*(t/1.25);
+ else if(t<3.25) v=700-(1400)*((t-1.25)/2);
+ else if(t<4.25) v=-700+(800)*((t-3.25)/1);
  else { $('sSpeed').value=100; fmt(); demoDone=true; return; }
  $('sSpeed').value=v; fmt();
  requestAnimationFrame(demoAnim);
