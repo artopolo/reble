@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Реблё</title>
 <style>
- html,body{margin:0;height:100dvh;overflow:hidden;background:#000;font-family:-apple-system,sans-serif;touch-action:none}
+ html,body{margin:0;height:100lvh;overflow:hidden;background:#000;font-family:-apple-system,sans-serif;touch-action:none}
  #load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;background:#0a0f14;z-index:10}
  #load svg{width:auto;height:min(80vh,150vw);max-width:92vw}
  #loadTxt{font-size:15px;color:rgba(255,255,255,.7);letter-spacing:.06em}
@@ -30,6 +30,7 @@
  #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:40px;line-height:34px;padding:0 8px 6px;text-shadow:0 1px 6px #000}
  #gyroAsk{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9;background:rgba(0,0,0,.45)}
  #gyroAsk button{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:16px 26px;font-size:17px}
+canvas{height:100lvh !important}
 </style>
 </head>
 <body>
@@ -61,7 +62,7 @@
 <div id="ui" style="display:none">
  <div class="row">
   <button id="bRestart">⟲</button>
-  <div class="sl"><span id="lSpeed">t 1×</span><input id="sSpeed" type="range" min="-500" max="500" value="100"></div>
+  <div class="sl"><span id="lSpeed">t 1×</span><input id="sSpeed" type="range" min="-690" max="690" value="100"></div>
   <div class="gy"><button id="bGyroT">гироскоп</button></div>
   <div class="sl"><span id="lH">H</span><input id="sHeight" type="range" min="-10" max="100" value="0"></div>
  </div>
@@ -98,7 +99,7 @@ const TRACK = await (await fetch('track.json')).json();
 const N=TRACK.length;
 const start=new THREE.Vector3(...TRACK[0]);
 const INTRO=4;
-const skyStart=new THREE.Vector3(start.x,start.y+1.6,start.z);
+const skyStart=new THREE.Vector3(start.x,start.y+0.8,start.z);
 
 const viewer = new GS.Viewer({
  cameraUp:[0,1,0], initialCameraPosition:[skyStart.x,skyStart.y,skyStart.z], initialCameraLookAt:[start.x,start.y,start.z],
