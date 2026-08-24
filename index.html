@@ -25,8 +25,6 @@
  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;margin-top:-11px;box-shadow:0 1px 6px rgba(0,0,0,.6)}
  input[type=range]::-moz-range-track{height:2px;background:rgba(255,255,255,.5)}
  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:none}
- #bGyroT{background:none;border:1px solid rgba(255,255,255,.45);border-radius:14px;color:rgba(255,255,255,.75);font-size:15px;line-height:26px;height:28px;padding:0 14px}
- #bGyroT.on{color:#0c1;border-color:#0c1}
  #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:36px;height:30px;display:flex;align-items:center;padding:0 8px;text-shadow:0 1px 6px #000;align-self:flex-end;margin-bottom:0px}
  #gyroAsk{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9;background:rgba(0,0,0,.45)}
  #gyroAsk button{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:16px 26px;font-size:17px}
@@ -35,6 +33,22 @@
  #bRide.on{color:#fc3;border-color:#fc3}
  #crash{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font-size:30vw;z-index:8;
   pointer-events:none;background:rgba(255,60,30,.25)}
+
+ #ui{opacity:0;transition:opacity 1.2s}
+ #ui.show{opacity:1}
+ .tglwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+ .tlab{font-size:12px;color:rgba(255,255,255,.75);text-shadow:0 1px 4px #000}
+ .switch{position:relative;width:51px;height:31px;display:inline-block}
+ .switch input{opacity:0;width:0;height:0}
+ .knob{position:absolute;inset:0;border-radius:16px;background:rgba(120,120,128,.45);transition:.25s;cursor:pointer}
+ .knob:before{content:"";position:absolute;width:27px;height:27px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+ .switch input:checked + .knob{background:#34c759}
+ .switch input:checked + .knob:before{transform:translateX(20px)}
+ #spdwrap{position:relative;display:flex;align-items:center;gap:8px}
+ #spdwrap .arr{font-size:15px;opacity:.7}
+ #sSpeed{width:min(56vw,520px)!important}
+ #spdLab{position:absolute;top:-20px;left:0;font-size:14px;font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 4px #000;transform:translateX(-50%);pointer-events:none;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -186,7 +200,7 @@ function devQuat(e,out){ // стандартный алгоритм DeviceOrient
  eul.set(THREE.MathUtils.degToRad(e.beta||0),THREE.MathUtils.degToRad(e.alpha||0),-THREE.MathUtils.degToRad(e.gamma||0),'YXZ');
  out.setFromEuler(eul); out.multiply(q1); out.multiply(qScr.setFromAxisAngle(zee,-scrAngle()));
  return out; }
-if(!('ontouchstart' in window)) document.getElementById('bGyroT').style.display='none';
+if(!('ontouchstart' in window)) document.querySelector('.tglwrap').style.display='none';
 // тихая проверка: если события уже идут — разрешение есть
 addEventListener('deviceorientation',function probe(e){ if(e.alpha!==null){gyroGranted=true; gyro=e;} },{once:true});
 addEventListener('deviceorientation',e=>{ if(gyroGranted) gyro=e; });
@@ -208,12 +222,16 @@ addEventListener('pointermove',e=>{if(!drag)return;
 addEventListener('pointerup',()=>drag=null);
 
 
-function fmt(){ 
+function fmt(){
  let v=parseFloat($('sSpeed').value); if(Math.abs(v)<25){v=0;$('sSpeed').value=0;}
- $('lSpeed').textContent='speed '+(v/100).toFixed(1).replace('.0','')+'×';
- const hOff=0;
+ const mult=(v/100); $('spdLab').textContent='x'+(Math.round(mult*10)/10).toString().replace('.0','');
+ // позиция подписи над кружком
+ const inp=$('sSpeed'), r=inp.getBoundingClientRect(), wrap=inp.parentElement.getBoundingClientRect();
+ const f=(v-(-1000))/(2000);
+ const pad=13, x=(r.left-wrap.left)+pad+f*(r.width-2*pad);
+ $('spdLab').style.left=x+'px';
 }
-$('sSpeed').oninput=fmt;
+$('sSpeed').oninput=fmt; addEventListener('resize',fmt);
 function crashNow(){ const c=document.getElementById('crash'); c.style.display='flex';
  setTimeout(()=>c.style.display='none',700); rv=0; lat=0; steer=0; }
 // тач-газ: правая половина экрана — газ, левая — тормоз (в режиме поездки)
@@ -234,7 +252,7 @@ $('bGyroT').onclick=async()=>{
   const yawDev=Math.atan2(f.x,f.z), yawPath=smYaw||0;
   qYawFix.setFromAxisAngle(new THREE.Vector3(0,1,0), yawPath-yawDev);
  } };
-$('bRestart').onclick=()=>{document.getElementById('ui').style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
+$('bRestart').onclick=()=>{const _u2=document.getElementById('ui');_u2.classList.remove('show');_u2.style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
  $('sSpeed').value=100;fmt();
 };
 
@@ -251,9 +269,11 @@ function tick(){
   const u=Math.min(1,(tsec-t0)/INTRO), e=u*u*(3-2*u);
   const p=new THREE.Vector3().lerpVectors(skyStart,start,e);
   cam.position.copy(p);
-  const look=new THREE.Vector3().lerpVectors(start,pathPoint(12),e);
+  const d0=pathDir(0);
+  const hor=new THREE.Vector3(start.x+Math.sin(d0)*3,start.y,start.z+Math.cos(d0)*3);
+  const look=new THREE.Vector3().lerpVectors(new THREE.Vector3(cx,0,cz),hor,e);
   cam.lookAt(look.x,look.y,look.z);
-  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();document.getElementById('ui').style.display='flex';}
+  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();const _u=document.getElementById('ui');_u.style.display='flex';requestAnimationFrame(()=>_u.classList.add('show'));fmt();}
  } else if(ride){
   // мотоцикл: газ/тормоз + руль
   let g=gas, st=0;
