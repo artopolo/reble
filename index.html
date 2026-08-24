@@ -47,7 +47,7 @@
  .switch input:checked + .knob{background:#34c759}
  .switch input:checked + .knob:before{transform:translateX(23px)}
  #spdwrap{position:relative;display:flex;align-items:center;gap:8px}
- #spdwrap .arr{display:flex;align-items:center;opacity:.8}
+ #spdwrap .arr{display:flex;align-items:center;opacity:.85;touch-action:manipulation;cursor:pointer;padding:8px 4px}
  #sSpeed{width:min(56vw,520px)!important}
  #spdLab{position:absolute;top:-20px;left:0;font-size:14px;font-variant-numeric:tabular-nums;
   text-shadow:0 1px 4px #000;transform:translateX(-50%);pointer-events:none;white-space:nowrap}
@@ -298,6 +298,13 @@ function fmt(){
 $('sSpeed').addEventListener('pointerdown',()=>{demoDone=true;clearTimeout(demoT);});
 $('sSpeed').addEventListener('touchstart',()=>{demoDone=true;clearTimeout(demoT);});
 $('sSpeed').oninput=()=>{fmt();};
+const arrs=document.querySelectorAll('#spdwrap .arr');
+function stepSpeed(d){ demoDone=true; clearTimeout(demoT);
+ let v=parseFloat($('sSpeed').value); v=Math.round(v/100)*100+d*100;
+ v=Math.max(-1000,Math.min(1000,v)); $('sSpeed').value=v; fmt(); }
+arrs[0].addEventListener('click',e=>{e.preventDefault();stepSpeed(-1);});
+arrs[1].addEventListener('click',e=>{e.preventDefault();stepSpeed(1);});
+['dblclick'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
 addEventListener('resize',fmt);
 function crashNow(){ const c=document.getElementById('crash'); c.style.display='flex';
  setTimeout(()=>c.style.display='none',700); rv=0; lat=0; steer=0; }
