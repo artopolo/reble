@@ -65,7 +65,7 @@
 
 <div id="crash">💥</div>
 <div id="ui" style="display:none">
- <div class="row">
+ <div class="row"><input id="sHeight" type="hidden" value="0">
   <button id="bRestart">⟲</button>
   <div class="sl"><span id="lSpeed">speed 1×</span><input id="sSpeed" type="range" min="-1000" max="1000" value="100"></div>
   <div class="gy"><button id="bGyroT">гироскоп</button></div>
@@ -202,9 +202,6 @@ function fmt(){
  const hOff=0;
 }
 $('sSpeed').oninput=fmt;
-$('bRide').onclick=()=>{ ride=!ride; $('bRide').classList.toggle('on',ride);
- if(ride){ rv=0; lat=0; steer=0; document.getElementById('ui').style.display='none'; }
- else { document.getElementById('ui').style.display='flex'; } };
 function crashNow(){ const c=document.getElementById('crash'); c.style.display='flex';
  setTimeout(()=>c.style.display='none',700); rv=0; lat=0; steer=0; }
 // тач-газ: правая половина экрана — газ, левая — тормоз (в режиме поездки)
