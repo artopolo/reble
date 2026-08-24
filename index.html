@@ -119,7 +119,8 @@ const viewer = new GS.Viewer({
  cameraUp:[0,1,0], initialCameraPosition:[skyStart.x,skyStart.y,skyStart.z], initialCameraLookAt:[start.x,start.y,start.z],
  sharedMemoryForWorkers:false, sphericalHarmonicsDegree:0, useBuiltInControls:false,
 });
-const splatBlob = await fetchProgress('village_all.splat',0.33,0);   // скачивание = первая треть
+const IS_MOBILE=/iPhone|iPad|Android/i.test(navigator.userAgent);
+const splatBlob = await fetchProgress(IS_MOBILE?'village_mobile.splat':'village_all.splat',0.33,0);   // скачивание = первая треть
 let fake=0.33;
 const anim=setInterval(()=>{ fake+=(0.97-fake)*0.06; setProgress(fake); },250); // сборка сцены = медленные две трети
 await viewer.addSplatScene(URL.createObjectURL(splatBlob),{format:GS.SceneFormat.Splat,showLoadingUI:false,rotation:[1,0,0,0]});
