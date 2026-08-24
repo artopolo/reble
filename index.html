@@ -86,7 +86,7 @@
 </div>
 
 <div id="crash">💥</div>
-<audio id="bgm" src="audio.m4a" loop preload="auto"></audio>
+<audio id="bgm" loop></audio>
 <button id="bRestart" style="display:none">⟲</button>
 <div id="sndwrap" style="visibility:hidden"><span class="tlab" style="font-size:17px;color:#fff">♫</span>
  <label class="switch"><input type="checkbox" id="sndTgl"><span class="knob"></span></label></div>
@@ -132,9 +132,13 @@ async function fetchProgress(url,weight,base){
 
 if(/Telegram|Instagram|FBAN|FBAV|VKClient/i.test(navigator.userAgent)) document.getElementById('inappHint').style.display='block';
 const bgm=document.getElementById('bgm');
-bgm.addEventListener('canplaythrough',()=>{document.getElementById('sndwrap').style.visibility='visible';},{once:true});
-bgm.load();
 document.getElementById('sndTgl').onchange=e=>{ if(e.target.checked){bgm.play().catch(()=>{e.target.checked=false;});} else bgm.pause(); };
+// звук качаем ПЕРВЫМ, кнопку показываем только когда реально можно жать
+try{
+ const ab=await (await fetch('audio.m4a')).blob();
+ bgm.src=URL.createObjectURL(ab);
+ document.getElementById('sndwrap').style.visibility='visible';
+}catch(e){}
 const TRACK = await (await fetch('track.json')).json();
 const DEM = await (await fetch('dem.json')).json();
 function groundAt(x,z){
