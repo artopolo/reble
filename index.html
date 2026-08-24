@@ -7,7 +7,7 @@
 <style>
  html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:-apple-system,sans-serif;touch-action:none}
  #load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;background:#0a0f14;z-index:10}
- #load svg{width:min(92vw,140vh);max-height:78vh;height:auto}
+ #load svg{width:auto;height:min(80vh,150vw);max-width:92vw}
  #loadTxt{font-size:15px;color:rgba(255,255,255,.7);letter-spacing:.06em}
  #ui{position:fixed;left:0;right:0;bottom:14px;display:flex;justify-content:center;align-items:flex-end;gap:26px;z-index:5;color:rgba(255,255,255,.85);font-size:13px}
  .sl{display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -24,21 +24,36 @@
 </head>
 <body>
 <div id="load">
- <svg viewBox="0 0 400 300">
-  <path d="M120,18 C160,8 205,14 228,30 C258,20 292,32 300,58 C330,66 344,92 336,118
-   C352,138 350,168 334,186 C342,214 326,244 298,252 C286,278 250,290 222,278
-   C192,294 156,290 138,272 C104,278 72,262 66,232 C40,220 30,190 44,166
-   C30,146 34,114 54,100 C48,72 64,44 92,36 C98,24 108,21 120,18 Z"
+ <svg viewBox="0 0 400 560">
+  <!-- Чудское и Псковское озёра -->
+  <path d="M120,60 C132,58 140,72 138,96 C150,100 156,116 150,132 C160,150 152,172 138,178
+   C128,182 118,172 116,158 C106,150 104,132 112,122 C104,106 106,74 120,60 Z"
+   fill="rgba(120,180,255,.18)" stroke="rgba(120,180,255,.35)" stroke-width="1"/>
+  <!-- контур Псковской области -->
+  <path d="M158,38 C176,30 196,36 202,50 C216,44 232,52 234,68 C246,80 244,100 236,110
+   C244,128 240,148 230,158 C238,176 236,198 226,210 C236,224 236,244 228,256
+   C238,268 240,290 232,304 C242,318 244,342 236,358 C250,368 256,390 250,408
+   C268,414 278,432 274,450 C284,464 282,486 268,496 C270,514 256,530 238,530
+   C228,544 206,550 190,542 C172,552 150,548 140,534 C120,538 102,528 98,510
+   C80,506 70,488 76,472 C62,462 58,442 68,428 C58,416 58,396 68,386 C60,372 62,352 74,342
+   C68,328 72,308 84,300 C78,286 82,266 94,258 C88,244 92,224 104,216 C100,200 106,182 118,176
+   C116,158 124,142 136,138 C132,120 138,100 150,94 C146,74 150,50 158,38 Z"
    fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
-  <path id="route" d="M96,96 C140,110 168,140 196,158 C230,180 262,196 300,214"
+  <path id="route" d="M150,215 C158,232 162,250 166,266 C172,296 172,322 176,346 C182,376 192,406 204,428 C208,436 212,440 216,442"
    fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-dasharray="4 6"/>
-  <path id="routeDone" d="M96,96 C140,110 168,140 196,158 C230,180 262,196 300,214"
+  <path id="routeDone" d="M150,215 C158,232 162,250 166,266 C172,296 172,322 176,346 C182,376 192,406 204,428 C208,436 212,440 216,442"
    fill="none" stroke="#fff" stroke-width="2.5"/>
-  <circle cx="96" cy="96" r="5" fill="#fff"/>
-  <text x="96" y="82" fill="rgba(255,255,255,.85)" font-size="14" text-anchor="middle">Псков</text>
-  <circle cx="300" cy="214" r="5" fill="rgba(255,255,255,.5)"/>
-  <text x="300" y="238" fill="rgba(255,255,255,.85)" font-size="14" text-anchor="middle">Реблё</text>
-  <circle id="bus" cx="96" cy="96" r="6" fill="#ffd876"/>
+  <circle cx="150" cy="215" r="5" fill="#fff"/>
+  <text x="140" y="203" fill="rgba(255,255,255,.85)" font-size="15" text-anchor="middle">Псков</text>
+  <circle cx="166" cy="266" r="2" fill="rgba(255,255,255,.5)"/>
+  <text x="146" y="270" fill="rgba(255,255,255,.45)" font-size="10" text-anchor="middle">Остров</text>
+  <circle cx="176" cy="346" r="2" fill="rgba(255,255,255,.5)"/>
+  <text x="154" y="350" fill="rgba(255,255,255,.45)" font-size="10" text-anchor="middle">Опочка</text>
+  <circle cx="204" cy="428" r="2" fill="rgba(255,255,255,.5)"/>
+  <text x="180" y="424" fill="rgba(255,255,255,.45)" font-size="10" text-anchor="middle">Пустошка</text>
+  <circle cx="216" cy="442" r="5" fill="rgba(255,255,255,.6)"/>
+  <text x="236" y="458" fill="rgba(255,255,255,.9)" font-size="15" text-anchor="middle">Реблё</text>
+  <circle id="bus" cx="150" cy="215" r="6" fill="#ffd876"/>
  </svg>
  <div id="loadTxt">едем…</div>
 </div>
