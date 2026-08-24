@@ -14,20 +14,20 @@
  #load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;background:#0a0f14;z-index:10}
  #load svg{width:auto;height:min(80vh,150vw);max-width:92vw}
  #loadTxt{font-size:15px;color:rgba(255,255,255,.7);letter-spacing:.06em}
- #ui{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:5;color:rgba(255,255,255,.85);font-size:13px}
- #ui>#bRestart{align-self:center;transform:translateX(-160px)}
- .row{display:flex;justify-content:center;align-items:center;gap:26px}
+ #ui{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:5;color:rgba(255,255,255,.9);font-size:16px}
+ 
+ .row{display:flex;justify-content:center;align-items:flex-end;gap:20px}
+ .gy{display:flex;flex-direction:column;justify-content:flex-start;height:52px}
  .sl{display:flex;flex-direction:column;align-items:center;gap:6px}
  .sl span{font-variant-numeric:tabular-nums;text-shadow:0 1px 4px #000}
- input[type=range]{-webkit-appearance:none;appearance:none;width:150px;height:20px;background:transparent}
- input[type=range]::-webkit-slider-runnable-track{height:2px;background:rgba(255,255,255,.5);border-radius:1px}
- input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;margin-top:-8px;box-shadow:0 1px 6px rgba(0,0,0,.6)}
+ input[type=range]{-webkit-appearance:none;appearance:none;width:190px;height:30px;background:transparent}
+ input[type=range]::-webkit-slider-runnable-track{height:3px;background:rgba(255,255,255,.5);border-radius:1px}
+ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;margin-top:-11px;box-shadow:0 1px 6px rgba(0,0,0,.6)}
  input[type=range]::-moz-range-track{height:2px;background:rgba(255,255,255,.5)}
- input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:none}
- #bGyroT{background:none;border:1px solid rgba(255,255,255,.45);border-radius:14px;color:rgba(255,255,255,.7);font-size:14px;line-height:26px;height:28px;padding:0 16px}
+ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:none}
+ #bGyroT{background:none;border:1px solid rgba(255,255,255,.45);border-radius:14px;color:rgba(255,255,255,.75);font-size:15px;line-height:26px;height:28px;padding:0 14px}
  #bGyroT.on{color:#0c1;border-color:#0c1}
- #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:34px;line-height:30px;padding:0 8px;text-shadow:0 1px 6px #000}
- #bGyroWrap{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:14px;z-index:6}
+ #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:40px;line-height:34px;padding:0 8px 6px;text-shadow:0 1px 6px #000}
  #gyroAsk{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9;background:rgba(0,0,0,.45)}
  #gyroAsk button{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:16px 26px;font-size:17px}
 </style>
@@ -58,11 +58,11 @@
  <div id="loadTxt">едем…</div>
 </div>
 
-<div id="bGyroWrap"><button id="bGyroT">гироскоп</button></div>
 <div id="ui" style="display:none">
- <button id="bRestart">⟲</button>
  <div class="row">
+  <button id="bRestart">⟲</button>
   <div class="sl"><span id="lSpeed">t 1×</span><input id="sSpeed" type="range" min="-500" max="500" value="100"></div>
+  <div class="gy"><button id="bGyroT">гироскоп</button></div>
   <div class="sl"><span id="lH">H</span><input id="sHeight" type="range" min="-10" max="100" value="0"></div>
  </div>
 </div>
@@ -160,7 +160,7 @@ function devQuat(e,out){ // стандартный алгоритм DeviceOrient
  eul.set(THREE.MathUtils.degToRad(e.beta||0),THREE.MathUtils.degToRad(e.alpha||0),-THREE.MathUtils.degToRad(e.gamma||0),'YXZ');
  out.setFromEuler(eul); out.multiply(q1); out.multiply(qScr.setFromAxisAngle(zee,-scrAngle()));
  return out; }
-if(!('ontouchstart' in window)) document.getElementById('bGyroWrap').style.display='none';
+if(!('ontouchstart' in window)) document.getElementById('bGyroT').style.display='none';
 // тихая проверка: если события уже идут — разрешение есть
 addEventListener('deviceorientation',function probe(e){ if(e.alpha!==null){gyroGranted=true; gyro=e;} },{once:true});
 addEventListener('deviceorientation',e=>{ if(gyroGranted) gyro=e; });
