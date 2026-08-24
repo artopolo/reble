@@ -52,7 +52,6 @@
 </style>
 </head>
 <body>
-<div id="errbox" style="position:fixed;top:0;left:0;right:0;z-index:99;background:#a00;color:#fff;font-size:12px;padding:4px 8px;display:none;white-space:pre-wrap"></div>
 <div id="load">
  <svg viewBox="0 0 400 560">
   <path d="M63.6,30.6 L84.0,25.0 L91.2,28.5 L96.3,30.5 L102.9,42.9 L105.8,46.0 L110.9,49.5 L119.9,45.1 L134.9,47.5 L146.5,53.5 L158.1,56.7 L168.1,52.3 L172.3,67.4 L179.9,70.6 L186.1,76.6 L184.9,83.1 L193.7,86.0 L195.4,91.7 L197.1,93.8 L204.9,94.6 L212.4,98.5 L212.3,105.6 L221.0,108.0 L225.6,113.3 L237.4,110.0 L239.0,118.3 L238.6,124.6 L234.9,133.4 L221.8,138.2 L216.7,141.4 L220.1,145.1 L219.2,156.6 L217.8,164.2 L225.4,162.5 L234.9,166.1 L244.4,169.2 L242.2,175.1 L236.6,182.6 L242.6,183.3 L253.3,184.0 L258.4,190.4 L273.1,189.2 L279.9,194.6 L289.9,196.9 L282.1,206.6 L282.1,209.7 L285.8,218.2 L300.8,229.7 L286.2,246.7 L286.7,253.3 L280.1,262.5 L282.9,271.5 L284.5,265.6 L285.8,270.0 L306.1,286.5 L300.4,325.2 L307.7,333.9 L313.5,335.9 L324.9,330.3 L321.9,341.3 L318.5,342.2 L317.3,349.9 L308.2,361.0 L309.7,364.8 L312.4,368.5 L317.0,379.1 L330.1,377.8 L330.4,384.5 L328.3,394.5 L330.0,405.2 L343.2,413.3 L350.9,427.0 L358.8,428.1 L365.9,432.2 L367.5,451.0 L367.2,465.0 L359.8,477.5 L358.7,487.5 L358.3,495.0 L361.6,507.7 L366.1,519.0 L363.2,514.1 L354.8,514.9 L349.2,514.2 L340.8,513.2 L329.6,511.1 L331.8,520.6 L322.7,527.9 L317.6,531.9 L311.1,535.0 L306.0,529.0 L300.3,529.5 L297.8,524.0 L293.0,512.7 L284.7,503.3 L273.1,499.8 L260.6,495.7 L256.7,500.4 L250.0,497.0 L237.9,495.8 L229.9,507.9 L222.9,506.4 L212.5,511.0 L200.8,514.9 L195.2,507.9 L197.3,497.7 L200.0,489.3 L199.3,483.8 L190.0,476.4 L181.9,475.1 L173.4,472.3 L165.6,473.2 L152.5,481.8 L141.3,474.8 L137.5,465.9 L136.4,459.4 L122.2,459.2 L114.9,458.9 L113.4,466.4 L107.1,461.6 L100.5,454.4 L99.6,444.7 L104.2,433.4 L99.8,414.8 L95.2,399.2 L95.7,393.1 L85.6,380.0 L83.1,369.5 L76.7,361.7 L82.8,353.9 L72.4,343.7 L59.9,350.1 L58.3,341.3 L64.0,332.2 L62.8,320.1 L64.7,313.3 L63.2,308.9 L70.7,297.1 L73.3,280.4 L65.3,273.0 L52.8,263.8 L48.2,257.3 L44.5,245.2 L32.5,248.4 L32.9,236.6 L36.3,230.8 L40.5,218.9 L46.5,219.9 L46.5,212.8 L46.7,207.9 L59.5,201.1 L69.7,197.5 L61.0,191.5 L59.3,187.3 L60.3,178.2 L53.9,174.5 L43.7,143.0 L32.9,59.1 L63.6,30.6 Z"
@@ -100,10 +99,6 @@
  "@mkkellogg/gaussian-splats-3d":"https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d@0.4.7/build/gaussian-splats-3d.module.min.js"
 }}
 </script>
-<script>
-window.addEventListener('error',e=>{const b=document.getElementById('errbox');b.style.display='block';b.textContent+='ERR: '+(e.message||e.type)+' @'+(e.filename||'')+':'+(e.lineno||'')+'\n';});
-window.addEventListener('unhandledrejection',e=>{const b=document.getElementById('errbox');b.style.display='block';b.textContent+='REJ: '+(e.reason&&e.reason.message||e.reason)+'\n';});
-</script>
 <script type="module">
 import * as GS from '@mkkellogg/gaussian-splats-3d';
 import * as THREE from 'three';
@@ -136,6 +131,7 @@ function groundAt(x,z){
  return (d[iz*w+ix]*(1-tx)*(1-tz)+d[iz*w+ix+1]*tx*(1-tz)+d[(iz+1)*w+ix]*(1-tx)*tz+d[(iz+1)*w+ix+1]*tx*tz)*s;
 }
 const N=TRACK.length;
+let cx=0,cz=0; for(const pt of TRACK){cx+=pt[0];cz+=pt[2];} cx/=N; cz/=N;
 const start=new THREE.Vector3(...TRACK[0]);
 const INTRO=4;
 const skyStart=new THREE.Vector3(start.x,start.y+0.8,start.z);
