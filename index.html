@@ -82,10 +82,16 @@
 
 <div id="crash">💥</div>
 <div id="ui" style="display:none">
- <div class="row"><input id="sHeight" type="hidden" value="0">
+ <div class="row">
+  <div class="tglwrap"><span class="tlab">гироскоп</span>
+   <label class="switch"><input type="checkbox" id="gyroTgl"><span class="knob"></span></label></div>
+  <div id="spdwrap">
+   <span id="spdLab">x1</span>
+   <span class="arr">⏪</span>
+   <input id="sSpeed" type="range" min="-1000" max="1000" value="100">
+   <span class="arr">⏩</span>
+  </div>
   <button id="bRestart">⟲</button>
-  <div class="sl"><span id="lSpeed">speed 1×</span><input id="sSpeed" type="range" min="-1000" max="1000" value="100"></div>
-  <div class="gy"><button id="bGyroT">гироскоп</button></div>
  </div>
 </div>
 <script type="importmap">
@@ -237,21 +243,20 @@ function crashNow(){ const c=document.getElementById('crash'); c.style.display='
 // тач-газ: правая половина экрана — газ, левая — тормоз (в режиме поездки)
 addEventListener('touchstart',e=>{ if(!ride)return; for(const t of e.touches){ if(t.clientY<innerHeight*0.75){ gas=(t.clientX>innerWidth/2)?1:-1; } } });
 addEventListener('touchend',e=>{ if(!ride)return; if(e.touches.length===0)gas=0; });
-$('bGyroT').onclick=async()=>{
- if(!gyroGranted){
+$('gyroTgl').onchange=async()=>{
+ const want=$('gyroTgl').checked;
+ if(want&&!gyroGranted){
   try{ if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission){
     const r=await DeviceOrientationEvent.requestPermission();
-    if(r!=='granted'){alert('Гироскоп не разрешён');return;} }
+    if(r!=='granted'){$('gyroTgl').checked=false;return;} }
    gyroGranted=true;
-  }catch(e){alert('Гироскоп недоступен');return;}
+  }catch(e){$('gyroTgl').checked=false;return;}
  }
- gyroOn=!gyroOn; $('bGyroT').classList.toggle('on',gyroOn);
- if(gyroOn&&gyro){ // якорь: совместить текущий взгляд по треку с текущей ориентацией телефона
-  devQuat(gyro,qDevice);
+ gyroOn=want;
+ if(gyroOn&&gyro){ devQuat(gyro,qDevice);
   const f=new THREE.Vector3(0,0,-1).applyQuaternion(qDevice);
-  const yawDev=Math.atan2(f.x,f.z), yawPath=smYaw||0;
-  qYawFix.setFromAxisAngle(new THREE.Vector3(0,1,0), yawPath-yawDev);
- } };
+  qYawFix.setFromAxisAngle(new THREE.Vector3(0,1,0), (smYaw||0)-Math.atan2(f.x,f.z)); }
+};
 $('bRestart').onclick=()=>{const _u2=document.getElementById('ui');_u2.classList.remove('show');_u2.style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
  $('sSpeed').value=100;fmt();
 };
