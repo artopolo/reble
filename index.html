@@ -241,17 +241,19 @@ function handDemo(){
  (function ha(){
   if(!handActive){hd.style.display='none';return;}
   const t=(performance.now()-t0h)/1000;
-  let dx=0, yv=0;
-  if(t<0.6){ dx=0; }                                    // появилась
-  else if(t<1.8){ const u=(t-0.6)/1.2; dx=Math.sin(u*Math.PI)* -140; yv=Math.sin(u*Math.PI)*-0.5; } // повела влево
-  else if(t<3.0){ const u=(t-1.8)/1.2; dx=Math.sin(u*Math.PI)* 140; yv=Math.sin(u*Math.PI)*0.5; }  // вправо
-  else { hd.style.display='none'; handActive=false; yawOff=0; return; }
-  hd.style.left=(cxs+dx-28)+'px'; hd.style.top=cys+'px';
-  yawOff=yv;
+  let dx=0, dy=0;
+  if(t<0.5){ dx=0; dy=0; }                              // появилась
+  else if(t<4.5){ const u=(t-0.5)/4;                    // восьмёрка
+   dx=Math.sin(u*2*Math.PI)*130;
+   dy=-Math.sin(u*4*Math.PI)*70;
+  }
+  else { hd.style.display='none'; handActive=false; yawOff=0; pitchOff=0; return; }
+  hd.style.left=(cxs+dx-28)+'px'; hd.style.top=(cys+dy)+'px';
+  yawOff=dx/130*0.45; pitchOff=-dy/70*0.3;
   requestAnimationFrame(ha);
  })();
 }
-addEventListener('pointerdown',(e)=>{ if(e.target.closest('#ui')||e.target.closest('#sndwrap')||e.target.closest('#bRestart'))return; window._userDragged=true; if(handActive){handActive=false; yawOff=0;} },{capture:true});
+addEventListener('pointerdown',(e)=>{ if(e.target.closest('#ui')||e.target.closest('#sndwrap')||e.target.closest('#bRestart'))return; window._userDragged=true; if(handActive){handActive=false; yawOff=0; pitchOff=0;} },{capture:true});
 let ride=false, rv=0, lat=0, steer=0, gas=0;
 let yawOff=0,pitchOff=0,smYaw=null,smPos=null,endSlow=1;
 let gyro=null,gyroOn=false,gyroGranted=false;
