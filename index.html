@@ -192,6 +192,21 @@ function makeCloudTitle_unused(){
 
 
 let phase='intro', t0=performance.now()/1000, idx=0;
+let demoT=null, demoStart=0, demoDone=false;
+function startDemoTimer(){ if(demoDone) return; clearTimeout(demoT);
+ demoT=setTimeout(()=>{ if(!demoDone){ demoStart=performance.now(); demoAnim(); } },3000); }
+function demoAnim(){
+ if(demoDone) return;
+ const t=(performance.now()-demoStart)/1000;
+ let v;
+ if(t<2.5)      v=100+(700-100)*(t/2.5);           // 1 → 7
+ else if(t<6.5) v=700-(1400)*((t-2.5)/4);          // 7 → -7
+ else if(t<8.5) v=-700+(800)*((t-6.5)/2);          // -7 → 1
+ else { $('sSpeed').value=100; fmt(); demoDone=true; return; }
+ $('sSpeed').value=v; fmt();
+ requestAnimationFrame(demoAnim);
+}
+['pointerdown','touchstart'].forEach(ev=>{ });
 let ride=false, rv=0, lat=0, steer=0, gas=0;
 let yawOff=0,pitchOff=0,smYaw=null,smPos=null,endSlow=1;
 let gyro=null,gyroOn=false,gyroGranted=false;
@@ -233,7 +248,10 @@ function fmt(){
  const pad=13, x=(r.left-wrap.left)+pad+f*(r.width-2*pad);
  $('spdLab').style.left=x+'px';
 }
-$('sSpeed').oninput=fmt; addEventListener('resize',fmt);
+$('sSpeed').addEventListener('pointerdown',()=>{demoDone=true;clearTimeout(demoT);});
+$('sSpeed').addEventListener('touchstart',()=>{demoDone=true;clearTimeout(demoT);});
+$('sSpeed').oninput=()=>{fmt();};
+addEventListener('resize',fmt);
 function crashNow(){ const c=document.getElementById('crash'); c.style.display='flex';
  setTimeout(()=>c.style.display='none',700); rv=0; lat=0; steer=0; }
 // тач-газ: правая половина экрана — газ, левая — тормоз (в режиме поездки)
@@ -274,7 +292,7 @@ function tick(){
   const hor=new THREE.Vector3(start.x+Math.sin(d0)*3,start.y,start.z+Math.cos(d0)*3);
   const look=new THREE.Vector3().lerpVectors(new THREE.Vector3(cx,0,cz),hor,e);
   cam.lookAt(look.x,look.y,look.z);
-  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();const _u=document.getElementById('ui');_u.style.display='flex';requestAnimationFrame(()=>_u.classList.add('show'));fmt();}
+  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();const _u=document.getElementById('ui');_u.style.display='flex';requestAnimationFrame(()=>_u.classList.add('show'));fmt();startDemoTimer();}
  } else if(ride){
   // мотоцикл: газ/тормоз + руль
   let g=gas, st=0;
