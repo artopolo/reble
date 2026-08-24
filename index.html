@@ -50,7 +50,7 @@
  #spdLab{position:absolute;top:-20px;left:0;font-size:14px;font-variant-numeric:tabular-nums;
   text-shadow:0 1px 4px #000;transform:translateX(-50%);pointer-events:none;white-space:nowrap}
 #sSpeed.pulse::-webkit-slider-thumb{animation:thpulse .8s ease-in-out 2}
-@keyframes thpulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.8)}50%{box-shadow:0 0 0 14px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+@keyframes thpulse{0%{box-shadow:0 0 0 2px rgba(255,255,255,.9)}50%{box-shadow:0 0 0 28px rgba(255,255,255,.15)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
 </style>
 </head>
 <body>
@@ -82,6 +82,7 @@
 </div>
 
 <div id="crash">💥</div>
+<div id="hand" style="position:fixed;z-index:7;font-size:56px;display:none;pointer-events:none;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))">🖐</div>
 <div id="ui" style="display:none">
  <div class="row">
   <div class="tglwrap"><span class="tlab">гироскоп</span>
@@ -200,7 +201,7 @@ function startDemoTimer(){ if(demoDone) return; clearTimeout(demoT);
    const s=$('sSpeed'); s.classList.add('pulse');
    setTimeout(()=>{ s.classList.remove('pulse');
      if(!demoDone){ demoStart=performance.now(); demoAnim(); } },1700);
- } },5000); }
+ } },7000); }
 function demoAnim(){
  if(demoDone) return;
  const t=(performance.now()-demoStart)/1000;
@@ -208,11 +209,31 @@ function demoAnim(){
  if(t<1.25)      v=100+(700-100)*(t/1.25);
  else if(t<3.0)  v=700-(1000)*((t-1.25)/1.75);
  else if(t<4.0)  v=-300+(400)*((t-3.0)/1);
- else { $('sSpeed').value=100; fmt(); demoDone=true; return; }
+ else { $('sSpeed').value=100; fmt(); handDemo(); demoDone=true; return; }
  $('sSpeed').value=v; fmt();
  requestAnimationFrame(demoAnim);
 }
-['pointerdown','touchstart'].forEach(ev=>{ });
+let handActive=false;
+function handDemo(){
+ if(window._userDragged) return;
+ const hd=document.getElementById('hand'); handActive=true;
+ hd.style.display='block';
+ const cxs=innerWidth/2, cys=innerHeight*0.45;
+ const t0h=performance.now();
+ (function ha(){
+  if(!handActive){hd.style.display='none';return;}
+  const t=(performance.now()-t0h)/1000;
+  let dx=0, yv=0;
+  if(t<0.6){ dx=0; }                                    // появилась
+  else if(t<1.8){ const u=(t-0.6)/1.2; dx=Math.sin(u*Math.PI)* -140; yv=Math.sin(u*Math.PI)*-0.5; } // повела влево
+  else if(t<3.0){ const u=(t-1.8)/1.2; dx=Math.sin(u*Math.PI)* 140; yv=Math.sin(u*Math.PI)*0.5; }  // вправо
+  else { hd.style.display='none'; handActive=false; yawOff=0; return; }
+  hd.style.left=(cxs+dx-28)+'px'; hd.style.top=cys+'px';
+  yawOff=yv;
+  requestAnimationFrame(ha);
+ })();
+}
+addEventListener('pointerdown',()=>{window._userDragged=true; if(handActive){handActive=false; yawOff=0;} },{capture:true});
 let ride=false, rv=0, lat=0, steer=0, gas=0;
 let yawOff=0,pitchOff=0,smYaw=null,smPos=null,endSlow=1;
 let gyro=null,gyroOn=false,gyroGranted=false;
