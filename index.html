@@ -262,10 +262,12 @@ function tick(){
   if(Math.abs(lat)>0.22){ crashNow(); }
   const p=pathPoint(idx), yawP=pathDir(idx);
   const rx=Math.cos(yawP), rz=-Math.sin(yawP); // right vector
-  p.x+=rx*lat; p.z+=rz*lat; p.y=groundAt(p.x,p.z)+0.08+Math.max(hOff,0)*0.3;
+  p.x+=rx*lat; p.z+=rz*lat;
+  const pAh=pathPoint(Math.min(idx+4,N-1));
+  p.y=Math.max(groundAt(p.x,p.z),groundAt(pAh.x,pAh.z))+0.09+Math.max(hOff,0)*0.3;
   if(!smPos)smPos=p.clone(); smPos.lerp(p,1-Math.pow(0.0005,dt));
   smYaw=(smYaw===null)?yawP:lerpAngle(smYaw,yawP+st*0.25,1-Math.pow(0.02,dt));
-  smPos.y=Math.max(smPos.y, groundAt(smPos.x,smPos.z)+0.06);
+  smPos.y=Math.max(smPos.y, groundAt(smPos.x,smPos.z)+0.08);
   cam.position.copy(smPos);
   const yw=smYaw, pt2=-0.05;
   cam.lookAt(smPos.x+Math.sin(yw)*Math.cos(pt2),smPos.y+Math.sin(pt2),smPos.z+Math.cos(yw)*Math.cos(pt2));
@@ -273,7 +275,7 @@ function tick(){
   if(idx>=N-30 && speed>0) endSlow=Math.max(0,(N-2-idx)/28); else endSlow=1;
   idx+=speed*endSlow*3*dt;
   if(idx<0)idx=0; if(idx>N-2)idx=N-2;
-  const p=pathPoint(idx); p.y+=hOff; p.y=Math.max(p.y, groundAt(p.x,p.z)+0.05);
+  const p=pathPoint(idx); p.y+=hOff; p.y=Math.max(p.y, groundAt(p.x,p.z)+0.07);
   if(!smPos)smPos=p.clone();
   smPos.lerp(p,1-Math.pow(0.001,dt));
   const targetYaw=pathDir(idx);
