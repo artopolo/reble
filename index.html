@@ -274,7 +274,7 @@ function tick(){
   if(idx>=N-30 && speed>0) endSlow=Math.max(0,(N-2-idx)/28); else endSlow=1;
   idx+=speed*endSlow*3*dt;
   if(idx<0)idx=0; if(idx>N-2)idx=N-2;
-  const p=pathPoint(idx); p.y+=hOff; p.y=Math.max(p.y, groundAt(p.x,p.z)+0.03);
+  const p=pathPoint(idx); p.y+=hOff; 
   if(!smPos)smPos=p.clone();
   smPos.lerp(p,1-Math.pow(0.001,dt));
   const targetYaw=pathDir(idx);
