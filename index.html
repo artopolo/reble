@@ -14,9 +14,11 @@
  #load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;background:#0a0f14;z-index:10}
  #load svg{width:auto;height:min(80vh,150vw);max-width:92vw}
  #loadTxt{font-size:15px;color:rgba(255,255,255,.7);letter-spacing:.06em}
- #ui{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:5;color:rgba(255,255,255,.9);font-size:15px}
+ #ui{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:11;color:rgba(255,255,255,.9);font-size:15px}
  
- .row{display:flex;justify-content:center;align-items:flex-end;gap:14px;flex-wrap:nowrap;white-space:nowrap}
+ .row{display:flex;justify-content:center;align-items:flex-end;gap:16px;flex-wrap:nowrap;white-space:nowrap}
+ #spdwrap,.tglwrap{align-self:flex-end}
+ #bRestart{align-self:flex-end;height:35px}
  .gy{display:flex;align-items:center}
  .sl{display:flex;flex-direction:column;align-items:center;gap:6px}
  .sl span{font-variant-numeric:tabular-nums;text-shadow:0 1px 4px #000}
@@ -25,7 +27,7 @@
  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;margin-top:-11px;box-shadow:0 1px 6px rgba(0,0,0,.6)}
  input[type=range]::-moz-range-track{height:2px;background:rgba(255,255,255,.5)}
  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:none}
- #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:36px;height:30px;display:flex;align-items:center;padding:0 8px;text-shadow:0 1px 6px #000;align-self:flex-end;margin-bottom:0px}
+ #bRestart{background:none;border:none;color:rgba(255,255,255,.9);font-size:34px;display:flex;align-items:center;padding:0 6px;text-shadow:0 1px 6px #000}
  #gyroAsk{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9;background:rgba(0,0,0,.45)}
  #gyroAsk button{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:16px 26px;font-size:17px}
  #bRide{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:14px;z-index:6;background:rgba(20,20,20,.6);
@@ -34,16 +36,16 @@
  #crash{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font-size:30vw;z-index:8;
   pointer-events:none;background:rgba(255,60,30,.25)}
 
- #ui{opacity:0;transition:opacity 1.2s}
- #ui.show{opacity:1}
+ #ui{opacity:1}
  .tglwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
- .tlab{font-size:12px;color:rgba(255,255,255,.75);text-shadow:0 1px 4px #000}
- .switch{position:relative;width:51px;height:31px;display:inline-block}
+ ..tlab-x{}
+ .tlab{font-size:18px;color:#fff;color:rgba(255,255,255,.75);text-shadow:0 1px 4px #000}
+ .switch{position:relative;width:58px;height:35px;display:inline-block}
  .switch input{opacity:0;width:0;height:0}
  .knob{position:absolute;inset:0;border-radius:16px;background:rgba(120,120,128,.45);transition:.25s;cursor:pointer}
- .knob:before{content:"";position:absolute;width:27px;height:27px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+ .knob:before{content:"";position:absolute;width:31px;height:31px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
  .switch input:checked + .knob{background:#34c759}
- .switch input:checked + .knob:before{transform:translateX(20px)}
+ .switch input:checked + .knob:before{transform:translateX(23px)}
  #spdwrap{position:relative;display:flex;align-items:center;gap:8px}
  #spdwrap .arr{display:flex;align-items:center;opacity:.8}
  #sSpeed{width:min(56vw,520px)!important}
@@ -52,13 +54,9 @@
 #sSpeed.pulse::-webkit-slider-thumb{animation:thpulse .8s ease-in-out 2}
 @keyframes thpulse{0%{box-shadow:0 0 0 2px rgba(255,255,255,.9)}50%{box-shadow:0 0 0 28px rgba(255,255,255,.15)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
 
- #sndwrap{position:fixed;left:calc(50% + min(28vw,260px) + 110px);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:11;
-  display:flex;flex-direction:column;align-items:center;gap:6px}
- #bRestart{position:fixed;left:calc(50% + min(28vw,260px) + 52px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:6}
 @media (max-width:700px){
   #bRestart{left:auto;right:52px;font-size:30px}
-  #sndwrap{left:auto;right:8px}
-  #sSpeed{width:48vw!important}
+   #sSpeed{width:48vw!important}
  }
 </style>
 </head>
@@ -92,21 +90,21 @@
 
 <div id="crash">💥</div>
 <audio id="bgm" loop></audio>
-<button id="bRestart" style="display:none">⟲</button>
-<div id="sndwrap" style="visibility:hidden"><span class="tlab" style="font-size:17px;color:#fff">♫</span>
- <label class="switch"><input type="checkbox" id="sndTgl"><span class="knob"></span></label></div>
 <div id="hand" style="position:fixed;z-index:7;font-size:56px;display:none;pointer-events:none;filter:grayscale(1) brightness(2.2) drop-shadow(0 2px 8px rgba(0,0,0,.6))">🖐</div>
-<div id="ui" style="display:none">
+<div id="ui">
  <div class="row">
-  <div class="tglwrap"><span class="tlab" style="font-size:17px;color:#fff">⚛︎</span>
+  <div class="tglwrap" id="gyroWrap" style="visibility:hidden"><span class="tlab">⚛︎</span>
    <label class="switch"><input type="checkbox" id="gyroTgl"><span class="knob"></span></label></div>
-  <div id="spdwrap">
+  <div id="spdwrap" style="visibility:hidden">
    <span id="spdLab">x1</span>
    <span class="arr"><svg width="22" height="12" viewBox="0 0 22 12"><polygon points="10,0 10,12 0,6" fill="#fff"/><polygon points="21,0 21,12 11,6" fill="#fff"/></svg></span>
    <input id="sSpeed" type="range" min="-1000" max="1000" value="100">
    <span class="arr"><svg width="22" height="12" viewBox="0 0 22 12"><polygon points="1,0 1,12 11,6" fill="#fff"/><polygon points="12,0 12,12 22,6" fill="#fff"/></svg></span>
   </div>
-  </div>
+  <button id="bRestart" style="visibility:hidden">⟲</button>
+  <div class="tglwrap" id="sndwrap" style="visibility:hidden"><span class="tlab">♫</span>
+   <label class="switch"><input type="checkbox" id="sndTgl"><span class="knob"></span></label></div>
+ </div>
 </div>
 <script type="importmap">
 {"imports":{
@@ -264,7 +262,7 @@ function devQuat(e,out){ // стандартный алгоритм DeviceOrient
  eul.set(THREE.MathUtils.degToRad(e.beta||0),THREE.MathUtils.degToRad(e.alpha||0),-THREE.MathUtils.degToRad(e.gamma||0),'YXZ');
  out.setFromEuler(eul); out.multiply(q1); out.multiply(qScr.setFromAxisAngle(zee,-scrAngle()));
  return out; }
-if(!('ontouchstart' in window)) document.querySelector('.tglwrap').style.display='none';
+if(!('ontouchstart' in window)) document.getElementById('gyroWrap').style.display='none';
 // тихая проверка: если события уже идут — разрешение есть
 addEventListener('deviceorientation',function probe(e){ if(e.alpha!==null){gyroGranted=true; gyro=e;} },{once:true});
 addEventListener('deviceorientation',e=>{ if(gyroGranted) gyro=e; });
@@ -318,7 +316,7 @@ $('gyroTgl').onchange=async()=>{
   const f=new THREE.Vector3(0,0,-1).applyQuaternion(qDevice);
   qYawFix.setFromAxisAngle(new THREE.Vector3(0,1,0), (smYaw||0)-Math.atan2(f.x,f.z)); }
 };
-$('bRestart').onclick=()=>{$('bRestart').style.display='none';const _u2=document.getElementById('ui');_u2.classList.remove('show');_u2.style.display='none';phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
+$('bRestart').onclick=()=>{['gyroWrap','spdwrap','bRestart'].forEach(id=>document.getElementById(id).style.visibility='hidden');phase='intro';t0=performance.now()/1000;idx=0;yawOff=0;pitchOff=0;smYaw=null;smPos=null;endSlow=1;
  $('sSpeed').value=100;fmt();
 };
 
@@ -339,7 +337,7 @@ function tick(){
   const hor=new THREE.Vector3(start.x+Math.sin(d0)*3,start.y,start.z+Math.cos(d0)*3);
   const look=new THREE.Vector3().lerpVectors(new THREE.Vector3(cx,0,cz),hor,e);
   cam.lookAt(look.x,look.y,look.z);
-  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();const _u=document.getElementById('ui');_u.style.display='flex';requestAnimationFrame(()=>_u.classList.add('show'));fmt();startDemoTimer();$('bRestart').style.display='flex';}
+  if(u>=1){phase='track';smYaw=pathDir(0);smPos=start.clone();['gyroWrap','spdwrap','bRestart'].forEach(id=>document.getElementById(id).style.visibility='visible');fmt();startDemoTimer();}
  } else if(ride){
   // мотоцикл: газ/тормоз + руль
   let g=gas, st=0;
