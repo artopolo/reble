@@ -56,7 +56,8 @@
 
 @media (max-width:700px){
   .row{width:100%;box-sizing:border-box;padding:0 14px;gap:12px;flex-direction:column;align-items:flex-start;white-space:normal}
-  #bRestart{order:1;font-size:30px;position:static;padding:0}
+  #gyroWrap,#sndwrap{align-self:flex-start}
+  #bRestart{order:1;font-size:60px;line-height:56px;position:static;padding:0;align-self:flex-start}
   #gyroWrap{order:2} #sndwrap{order:3;position:static}
   #spdwrap{order:4;width:100%;min-width:0;gap:6px;justify-content:center}
   #sSpeed{flex:1;width:auto!important;min-width:0;max-width:none}
@@ -101,7 +102,7 @@
 <div id="hand" style="position:fixed;z-index:7;font-size:56px;display:none;pointer-events:none;filter:grayscale(1) brightness(2.2) drop-shadow(0 2px 8px rgba(0,0,0,.6))">🖐</div>
 <div id="ui">
  <div class="row">
-  <div class="tglwrap" id="gyroWrap" style="visibility:hidden"><span class="tlab">⚛︎</span>
+  <div class="tglwrap" id="gyroWrap" style="visibility:hidden"><span class="tlab" style="font-size:32px">⚛︎</span>
    <label class="switch"><input type="checkbox" id="gyroTgl"><span class="knob"></span></label></div>
   <div id="spdwrap" style="visibility:hidden">
    <span id="spdLab">x1</span>
@@ -110,7 +111,7 @@
    <span class="arr"><svg width="22" height="12" viewBox="0 0 22 12"><polygon points="1,0 1,12 11,6" fill="#fff"/><polygon points="12,0 12,12 22,6" fill="#fff"/></svg></span>
   </div>
   <button id="bRestart" style="visibility:hidden">⟲</button>
-  <div class="tglwrap" id="sndwrap" style="visibility:hidden"><span class="tlab">♫</span>
+  <div class="tglwrap" id="sndwrap" style="visibility:hidden"><span class="tlab" style="font-size:24px">♫</span>
    <label class="switch"><input type="checkbox" id="sndTgl"><span class="knob"></span></label></div>
  </div>
 </div>
