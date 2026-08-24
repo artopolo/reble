@@ -70,7 +70,7 @@
   <button id="bRestart">⟲</button>
   <div class="sl"><span id="lSpeed">t 1×</span><input id="sSpeed" type="range" min="-690" max="690" value="100"></div>
   <div class="gy"><button id="bGyroT">гироскоп</button></div>
-  <div class="sl"><span id="lH">H</span><input id="sHeight" type="range" min="-10" max="100" value="0"></div>
+  <div class="sl"><span id="lH">H</span><input id="sHeight" type="range" min="-170" max="100" value="0"></div>
  </div>
 </div>
 <script type="importmap">
@@ -198,10 +198,10 @@ addEventListener('pointermove',e=>{if(!drag)return;
 addEventListener('pointerup',()=>drag=null);
 
 
-function fmt(){
+function fmt(){ $('lH').textContent='H '+(parseFloat($('sHeight').value)/100*0.35).toFixed(2);
  let v=parseFloat($('sSpeed').value); if(Math.abs(v)<25){v=0;$('sSpeed').value=0;}
  $('lSpeed').textContent='t '+(v/100).toFixed(1).replace('.0','')+'×';
- const hOff=Math.max(parseFloat($('sHeight').value)/100*0.35,-0.02);
+ const hOff=parseFloat($('sHeight').value)/100*0.35;
 }
 $('sSpeed').oninput=fmt; $('sHeight').oninput=fmt;
 $('bRide').onclick=()=>{ ride=!ride; $('bRide').classList.toggle('on',ride);
@@ -238,7 +238,7 @@ function tick(){
  const tsec=now/1000;
   let sv=parseFloat($('sSpeed').value); if(Math.abs(sv)<25)sv=0;
  const speed=sv/100;
- const hOff=Math.max(parseFloat($('sHeight').value)/100*0.35,-0.02);
+ const hOff=parseFloat($('sHeight').value)/100*0.35;
 
  if(phase==='intro'){
   const u=Math.min(1,(tsec-t0)/INTRO), e=u*u*(3-2*u);
@@ -275,7 +275,7 @@ function tick(){
   if(idx>=N-30 && speed>0) endSlow=Math.max(0,(N-2-idx)/28); else endSlow=1;
   idx+=speed*endSlow*3*dt;
   if(idx<0)idx=0; if(idx>N-2)idx=N-2;
-  const p=pathPoint(idx); p.y+=hOff; p.y=Math.max(p.y, groundAt(p.x,p.z)+0.14);
+  const p=pathPoint(idx); p.y+=hOff; p.y=Math.max(p.y, groundAt(p.x,p.z)+0.03);
   if(!smPos)smPos=p.clone();
   smPos.lerp(p,1-Math.pow(0.001,dt));
   const targetYaw=pathDir(idx);
